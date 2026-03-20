@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ugadi Year Finder</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Telugu:wght@400;700&family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(255, 245, 220, 0.95), rgba(245, 230, 211, 0.95)),
+        linear-gradient(135deg, #fffaf3, #f6e8d5);
+      color: #3c2b1f;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      padding: 36px 28px;
+      box-shadow: 0 20px 60px rgba(80, 52, 24, 0.12);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 32px;
+    }
+
+    .english-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-top: 8px;
+    }
+
+    .subtitle {
+      margin: 16px auto 28px;
+      font-size: 15px;
+      color: rgba(60,43,31,0.75);
+      line-height: 1.5;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(120,90,50,0.1);
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #d4af37, #f3d67a);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 24px;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: left;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .year-en {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+    }
+
+    .year-te {
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 20px;
+      margin-top: 6px;
+    }
+
+    .meaning {
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(60,43,31,0.8);
+    }
+
+    .share-box {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .share-btn {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(212,175,55,0.2);
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>ఉగాది శుభాకాంక్షలు</h1>
+  <div class="english-title">Happy Ugadi</div>
+
+  <div class="subtitle">
+    do you know your తెలుగు birth year name?<br>
+    find your <em>samvatsaram</em> ✨
+  </div>
+
+  <input type="number" id="yearInput" placeholder="enter your birth year" />
+  <button onclick="findYear()">Reveal ✨</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+
+const appLink = "https://jayasrisng.github.io/ugadi-year-finder/";
+
+const samvatsara = [
+  { en: "Prabhava", te: "ప్రభవ", meaning: "main character energy. new beginnings, new vibes, new era." },
+  { en: "Vibhava", te: "విభవ", meaning: "abundance era. things just seem to flow your way." },
+  { en: "Shukla", te: "శుక్ల", meaning: "clear mind, clear path. minimal chaos (for once)." },
+  { en: "Pramoduta", te: "ప్రమోదూత", meaning: "joy overload. this is your ‘life feels good’ era." },
+  { en: "Prajothpatti", te: "ప్రజోత్పత్తి", meaning: "creator mode. ideas, growth, building something real." },
+  { en: "Angirasa", te: "ఆంగీరస", meaning: "wise but lowkey chaotic thinker. deep conversations energy." },
+  { en: "Shrimukha", te: "శ్రీముఖ", meaning: "grace, charm, and people just liking you for no reason." },
+  { en: "Bhava", te: "భావ", meaning: "feels. lots of feels. emotional depth unlocked." },
+  { en: "Yuva", te: "యువ", meaning: "youthful chaos. curiosity > fear." },
+  { en: "Dhata", te: "ధాత", meaning: "the stable one. people rely on you (even if you didn’t ask for it)." },
+  { en: "Ishvara", te: "ఈశ్వర", meaning: "leader energy. you just take charge naturally." },
+  { en: "Bahudhanya", te: "బహుధాన్య", meaning: "full plate, full heart. abundance everywhere." },
+  { en: "Pramathi", te: "ప్రమాది", meaning: "intense mind. you feel everything deeply." },
+  { en: "Vikrama", te: "విక్రమ", meaning: "bold moves only. risk taker energy." },
+  { en: "Vrisha", te: "వృష", meaning: "slow, steady, unshakeable. calm power." },
+  { en: "Chitrabhanu", te: "చిత్రభాను", meaning: "creative spark. ideas hit you randomly and beautifully." },
+  { en: "Svabhanu", te: "స్వభాను", meaning: "mysterious aura. not everyone gets you and that’s the point." },
+  { en: "Tarana", te: "తారణ", meaning: "you always figure it out. resilience is your thing." },
+  { en: "Parthiva", te: "పార్థివ", meaning: "grounded, practical, no nonsense." },
+  { en: "Vyaya", te: "వ్యయ", meaning: "letting go era. you release what no longer fits." },
+  { en: "Sarvajit", te: "సర్వజిత్", meaning: "quiet winner. you get things done." },
+  { en: "Sarvadhari", te: "సర్వధారి", meaning: "you carry a lot… and somehow still handle it." },
+  { en: "Virodhi", te: "విరోధి", meaning: "you question everything. rebel energy." },
+  { en: "Vikruti", te: "వికృతి", meaning: "change is your default setting." },
+  { en: "Khara", te: "ఖర", meaning: "tough, resilient, doesn’t give up." },
+  { en: "Nandana", te: "నందన", meaning: "soft joy. people feel safe around you." },
+  { en: "Vijaya", te: "విజయ", meaning: "win after win. you don’t miss." },
+  { en: "Jaya", te: "జయ", meaning: "you show up and it works out." },
+  { en: "Manmatha", te: "మన్మథ", meaning: "charm unlocked. people notice you." },
+  { en: "Durmukhi", te: "దుర్ముఖి", meaning: "life throws chaos… you grow anyway." },
+  { en: "Hevilambi", te: "హేవిళంబి", meaning: "slow down, think deep, move smart." },
+  { en: "Vilambi", te: "విళంబి", meaning: "delayed but worth it. timing is everything." },
+  { en: "Vikari", te: "వికారి", meaning: "transformation arc. big changes, big growth." },
+  { en: "Sharvari", te: "శార్వరి", meaning: "quiet strength. calm but powerful." },
+  { en: "Plava", te: "ప్లవ", meaning: "movement era. travel, change, new directions." },
+  { en: "Shubhakritu", te: "శుభకృతు", meaning: "good things find you. simple." },
+  { en: "Shobhakritu", te: "శోభకృతు", meaning: "everything feels a little more beautiful." },
+  { en: "Krodhi", te: "క్రోధి", meaning: "intense energy. you don’t do anything halfway." },
+  { en: "Vishvavasu", te: "విశ్వావసు", meaning: "expansive mindset. big picture thinker." },
+  { en: "Parabhava", te: "పరాభవ", meaning: "humbling lessons. rebuild stronger." },
+  { en: "Plavanga", te: "ప్లవంగ", meaning: "playful, energetic, always moving." },
+  { en: "Kilaka", te: "కీలక", meaning: "turning point energy. something shifts." },
+  { en: "Saumya", te: "సౌమ్య", meaning: "soft, kind, calm presence." },
+  { en: "Sadharana", te: "సాధారణ", meaning: "balanced life. nothing extreme, everything steady." },
+  { en: "Virodhikritu", te: "విరోధికృతు", meaning: "pushback creates growth." },
+  { en: "Paridhavi", te: "పరిధావి", meaning: "always chasing something bigger." },
+  { en: "Pramadi", te: "ప్రమాది", meaning: "passion runs high. unpredictable but alive." },
+  { en: "Ananda", te: "ఆనంద", meaning: "pure joy. you radiate happiness." },
+  { en: "Rakshasa", te: "రాక్షస", meaning: "fierce energy. powerful presence." },
+  { en: "Nala", te: "నల", meaning: "smart, calm, gets things done quietly." },
+  { en: "Pingala", te: "పింగళ", meaning: "warm, expressive, easy to vibe with." },
+  { en: "Kalayukti", te: "కలయుక్తి", meaning: "strategy brain. always thinking ahead." },
+  { en: "Siddharthi", te: "సిద్ధార్థి", meaning: "goal getter. you actually follow through." },
+  { en: "Raudra", te: "రౌద్ర", meaning: "intense, bold, unapologetic." },
+  { en: "Durmati", te: "దుర్మతి", meaning: "learn the hard way… but you learn." },
+  { en: "Dundubhi", te: "దుందుభి", meaning: "loud energy. people notice you." },
+  { en: "Rudhirodgari", te: "రుధిరోద్గారి", meaning: "deep emotions. strong inner world." },
+  { en: "Raktakshi", te: "రక్తాక్షి", meaning: "passion first, logic later." },
+  { en: "Krodhana", te: "క్రోధన", meaning: "fire inside. driven and unstoppable." },
+  { en: "Akshaya", te: "అక్షయ", meaning: "limitless growth. keeps going." }
+];
+
+
+function findYear() {
+  const year = parseInt(document.getElementById("yearInput").value);
+  const result = document.getElementById("result");
+
+  if (!year) return;
+
+  const index = ((year - 1987) % 60 + 60) % 60;
+  const data = samvatsara[index];
+
+  const shareText = `i was born in ${data.en} (${data.te}) ✨ know yours on: ${appLink}`;
+
+  result.innerHTML = `
+    <div class="result">
+      <div class="year-en">${data.en} Nama Samvatsaram</div>
+      <div class="year-te">${data.te} నామ సంవత్సరం</div>
+      <div class="meaning">${data.meaning}</div>
+
+      <div class="share-box">
+        <button class="share-btn" onclick='share("${shareText}")'>
+          share ✨
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function share(text) {
+  try {
+    if (navigator.share) {
+      await navigator.share({ text });
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("copied ✨ now paste & share");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+</script>
+
+</body>
+</html>
